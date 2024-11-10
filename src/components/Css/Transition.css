@@ -1,0 +1,77 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+#root {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.main {
+    opacity: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #D90101;
+    overflow: hidden;
+    position: relative;
+}
+
+svg {
+    position: absolute;
+    width: 40vw;
+    overflow: visible;
+    display: block;
+    z-index: 1;
+}
+
+.container svg {
+    opacity: 0;
+    position: absolute;
+    z-index: 1;
+}
+
+header {
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #000000; /* Text color */
+    font-family: Arial, sans-serif;
+    z-index: 2;
+    position: relative;
+}
+
+h1 {
+    font-size: 5rem;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #f9f8f5;
+    z-index: 1;
+}
+
+.container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
