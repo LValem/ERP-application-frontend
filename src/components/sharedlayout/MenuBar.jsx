@@ -6,8 +6,12 @@ import '../Css/MenuBar.css';
 function MenuBar({ isOpen, toggleMenu }) {
 
     const menuLinks = [
-        { path: '/home', text: 'Avaleht' },
-        { path: '/employees', text: 'Töötajad' },
+        { path: '/home', text: 'Homepage' },
+        { path: '/employees', text: 'Employees' },
+        { path: '/customers', text: 'Customers'},
+        { path: '/orders', text: 'Orders'},
+        { path: 'jobs/done', text: 'Completed jobs'},
+        { path: 'jobs/not-done', text: 'Jobs in process'},
     ];
 
     return (

@@ -1,10 +1,45 @@
 import React, {useEffect, useRef, useState} from "react";
 import MenuBar from './MenuBar';
 import '../Css/Header.css';
+import {useLocation, useParams} from "react-router-dom";
 
 function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef(null);
+    const location = useLocation();
+    const params = useParams();
+
+    const headerTitles = {
+        "/home": "Homepage",
+        "/employees": "Employees",
+        "/customers": "Customers",
+        "/customers/add": "Create a new customer",
+        "/customers/edit/:CustomerId": "Edit Customer",
+        "/orders": "Orders",
+        "/orders/add": "Create a new order",
+        "/orders/edit/:orderId": "Edit Order",
+        "/jobs/done": "Completed jobs",
+        "/jobs/not-done": "Jobs in process",
+        "/jobs/add": "Create a new job"
+    };
+
+    // Should include id as well, like "Edit Order 4" but doesn't
+    const getCurrentTitle = (path, params) => {
+        for (const key in headerTitles) {
+            // Create a regex to match dynamic routes like ":orderId"
+            const regex = new RegExp(`^${key.replace(/:\w+/g, "\\w+")}$`);
+
+            if (regex.test(path)) {
+                return headerTitles[key].replace(/\{\w+\}/g, (match) => {
+                    const paramKey = match.slice(1, -1);
+                    return params[paramKey] || match;
+                });
+            }
+        }
+        return "";
+    };
+
+    const currentTitle = getCurrentTitle(location.pathname, params);
 
     const toggleMenu = () => {
         setIsMenuOpen((prevState) => !prevState);
@@ -38,6 +73,9 @@ function Header() {
                     </label>
                 </div>
                 <MenuBar isOpen={isMenuOpen} toggleMenu={toggleMenu} ref={menuRef}/>
+                <div className="header-title">
+                    <h1>{currentTitle}</h1>
+                </div>
                 <a href="/" className="logo-link">
                     <img src="/src/assets/stekkor-logo-header.png" alt="Stekkor Transport Logo"
                          className="header-logo"/>
