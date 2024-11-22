@@ -48,3 +48,17 @@ tr:nth-child(even) {
     color: red;
     margin-top: 1rem;
 }
+
+.link-button {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+    font-size: inherit;
+}
+
+.link-button:hover {
+    color: #0056b3;
+}
