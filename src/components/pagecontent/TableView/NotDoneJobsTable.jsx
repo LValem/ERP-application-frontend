@@ -12,10 +12,31 @@ const NotDoneJobsTable = () => {
     const navigate = useNavigate();
 
     const [criteria, setCriteria] = useState({
+        jobId: null,
+        vehicleId: null,
+        registrationPlate: null,
+        orderId: null,
+        customerName: null,
+        pickupDateStart: null,
+        pickupDateEnd: null,
+        dropOffDateStart: null,
+        dropOffDateEnd: null,
         sortBy: null,
         sortDirection: null,
         page: 0,
         size: 20,
+    });
+
+    const [searchFields, setSearchFields] = useState({
+        jobId: "",
+        vehicleId: "",
+        registrationPlate: "",
+        orderId: "",
+        customerName: "",
+        pickupDateStart: "",
+        pickupDateEnd: "",
+        dropOffDateStart: "",
+        dropOffDateEnd: "",
     });
 
     useEffect(() => {
@@ -43,6 +64,62 @@ const NotDoneJobsTable = () => {
         }
     };
 
+    const handleSearchChange = (e) => {
+        const { name, value } = e.target;
+        setSearchFields((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const applySearchCriteria = (e) => {
+        if (e.key === "Enter") {
+            setCriteria((prev) => ({
+                ...prev,
+                jobId: searchFields.jobId.trim() ? parseInt(searchFields.jobId, 10) : null,
+                vehicleId: searchFields.vehicleId.trim() ? parseInt(searchFields.vehicleId, 10) : null,
+                registrationPlate: searchFields.registrationPlate.trim() || null,
+                orderId: searchFields.orderId.trim() ? parseInt(searchFields.orderId, 10) : null,
+                customerName: searchFields.customerName.trim() || null,
+                pickupDateStart: searchFields.pickupDateStart || null,
+                pickupDateEnd: searchFields.pickupDateEnd || null,
+                dropOffDateStart: searchFields.dropOffDateStart || null,
+                dropOffDateEnd: searchFields.dropOffDateEnd || null,
+                page: 0, // Reset to the first page
+            }));
+        }
+    };
+
+    const handleReset = () => {
+        setSearchFields({
+            jobId: "",
+            vehicleId: "",
+            registrationPlate: "",
+            orderId: "",
+            customerName: "",
+            pickupDateStart: "",
+            pickupDateEnd: "",
+            dropOffDateStart: "",
+            dropOffDateEnd: "",
+        });
+
+        setCriteria({
+            jobId: null,
+            vehicleId: null,
+            registrationPlate: null,
+            orderId: null,
+            customerName: null,
+            pickupDateStart: null,
+            pickupDateEnd: null,
+            dropOffDateStart: null,
+            dropOffDateEnd: null,
+            sortBy: null,
+            sortDirection: null,
+            page: 0,
+            size: 20,
+        });
+    };
+
     const handleSort = (field) => {
         setCriteria((prev) => ({
             ...prev,
@@ -60,14 +137,62 @@ const NotDoneJobsTable = () => {
 
     return (
         <div className="table-container">
+            {/* Search Fields */}
+            <div className="search-fields">
+                <input
+                    type="number"
+                    name="jobId"
+                    placeholder="Search by Job ID"
+                    value={searchFields.jobId}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="number"
+                    name="vehicleId"
+                    placeholder="Search by Vehicle ID"
+                    value={searchFields.vehicleId}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="text"
+                    name="registrationPlate"
+                    placeholder="Search by Registration Plate"
+                    value={searchFields.registrationPlate}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="number"
+                    name="orderId"
+                    placeholder="Search by Order ID"
+                    value={searchFields.orderId}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="text"
+                    name="customerName"
+                    placeholder="Search by Customer Name"
+                    value={searchFields.customerName}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <button onClick={handleReset} className="add-button">
+                    Reset
+                </button>
+            </div>
+
             <div className="metadata">
-                <p>Total Not Done Jobs: {totalElements}</p>
-                <p>Total Pages: {totalPages}</p>
-                <p>Current Page: {currentPage + 1}</p>
-                {/* Add New Job Button */}
                 <button onClick={() => navigate("/jobs/add")} className="add-button">
                     Add New Job
                 </button>
+                <div className="metadata-info">
+                    <p>Total Orders: {totalElements}</p>
+                    <p>Total Pages: {totalPages}</p>
+                    <p>Current Page: {currentPage + 1}</p>
+                </div>
             </div>
 
             <div className="table-wrapper">

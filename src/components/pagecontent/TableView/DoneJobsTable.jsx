@@ -9,10 +9,35 @@ const DoneJobsTable = () => {
     const [currentPage, setCurrentPage] = useState(0);
 
     const [criteria, setCriteria] = useState({
+        jobId: null,
+        vehicleId: null,
+        registrationPlate: null,
+        fuelUsedMin: null,
+        fuelUsedMax: null,
+        orderId: null,
+        customerName: null,
+        pickupDateStart: null,
+        pickupDateEnd: null,
+        dropOffDateStart: null,
+        dropOffDateEnd: null,
         sortBy: null,
         sortDirection: null,
         page: 0,
         size: 20,
+    });
+
+    const [searchFields, setSearchFields] = useState({
+        jobId: "",
+        vehicleId: "",
+        registrationPlate: "",
+        fuelUsedMin: "",
+        fuelUsedMax: "",
+        orderId: "",
+        customerName: "",
+        pickupDateStart: "",
+        pickupDateEnd: "",
+        dropOffDateStart: "",
+        dropOffDateEnd: "",
     });
 
     useEffect(() => {
@@ -48,6 +73,66 @@ const DoneJobsTable = () => {
         }));
     };
 
+    const handleSearchChange = (e) => {
+        const { name, value } = e.target;
+        setSearchFields((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const applySearchCriteria = (e) => {
+        if (e.key === "Enter") {
+            setCriteria((prev) => ({
+                ...prev,
+                jobId: searchFields.jobId.trim() ? parseInt(searchFields.jobId, 10) : null,
+                vehicleId: searchFields.vehicleId.trim() ? parseInt(searchFields.vehicleId, 10) : null,
+                registrationPlate: searchFields.registrationPlate.trim() ? searchFields.registrationPlate : null,
+                fuelUsedMin: searchFields.fuelUsedMin.trim() ? parseFloat(searchFields.fuelUsedMin) : null,
+                fuelUsedMax: searchFields.fuelUsedMax.trim() ? parseFloat(searchFields.fuelUsedMax) : null,
+                orderId: searchFields.orderId.trim() ? parseInt(searchFields.orderId, 10) : null,
+                customerName: searchFields.customerName.trim() ? searchFields.customerName : null,
+                pickupDateStart: searchFields.pickupDateStart || null,
+                pickupDateEnd: searchFields.pickupDateEnd || null,
+                dropOffDateStart: searchFields.dropOffDateStart || null,
+                dropOffDateEnd: searchFields.dropOffDateEnd || null,
+                page: 0,
+            }));
+        }
+    };
+
+    const handleReset = () => {
+        setSearchFields({
+            jobId: "",
+            vehicleId: "",
+            registrationPlate: "",
+            fuelUsedMin: "",
+            fuelUsedMax: "",
+            orderId: "",
+            customerName: "",
+            pickupDateStart: "",
+            pickupDateEnd: "",
+            dropOffDateStart: "",
+            dropOffDateEnd: "",
+        });
+
+        setCriteria((prev) => ({
+            ...prev,
+            jobId: null,
+            vehicleId: null,
+            registrationPlate: null,
+            fuelUsedMin: null,
+            fuelUsedMax: null,
+            orderId: null,
+            customerName: null,
+            pickupDateStart: null,
+            pickupDateEnd: null,
+            dropOffDateStart: null,
+            dropOffDateEnd: null,
+            page: 0,
+        }));
+    };
+
     const handlePageChange = (page) => {
         if (page >= 0 && page < totalPages) {
             setCriteria((prev) => ({ ...prev, page }));
@@ -57,10 +142,75 @@ const DoneJobsTable = () => {
 
     return (
         <div className="table-container">
+            {/* Search Fields */}
+            <div className="search-fields">
+                <input
+                    type="number"
+                    name="jobId"
+                    placeholder="Search by Job ID"
+                    value={searchFields.jobId}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="number"
+                    name="vehicleId"
+                    placeholder="Search by Vehicle ID"
+                    value={searchFields.vehicleId}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="text"
+                    name="registrationPlate"
+                    placeholder="Search by Registration Plate"
+                    value={searchFields.registrationPlate}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="number"
+                    name="fuelUsedMin"
+                    placeholder="Min Fuel Used"
+                    value={searchFields.fuelUsedMin}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="number"
+                    name="fuelUsedMax"
+                    placeholder="Max Fuel Used"
+                    value={searchFields.fuelUsedMax}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="number"
+                    name="orderId"
+                    placeholder="Search by Order ID"
+                    value={searchFields.orderId}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="text"
+                    name="customerName"
+                    placeholder="Search by Customer Name"
+                    value={searchFields.customerName}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <button onClick={handleReset} className="add-button">
+                    Reset
+                </button>
+            </div>
+
             <div className="metadata">
-                <p>Total Done Jobs: {totalElements}</p>
-                <p>Total Pages: {totalPages}</p>
-                <p>Current Page: {currentPage + 1}</p>
+                <div className="metadata-info">
+                    <p>Total Orders: {totalElements}</p>
+                    <p>Total Pages: {totalPages}</p>
+                    <p>Current Page: {currentPage + 1}</p>
+                </div>
             </div>
 
             <div className="table-wrapper">

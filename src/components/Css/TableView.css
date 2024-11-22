@@ -1,13 +1,43 @@
 .table-container {
     width: 100%;
+    height: calc(100vh - 16rem);
+    overflow-y: auto;
+    overflow-x: hidden;
     padding: 0;
     margin: 0;
     box-sizing: border-box;
 }
 
 .metadata {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 10px;
     padding: 0 15px;
+}
+
+.metadata-info {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.search-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 0 15px;
+}
+
+.search-fields input {
+    flex: 1;
+    min-width: 3rem;
+    height: 1rem;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
 }
 
 .table-wrapper {
@@ -20,20 +50,23 @@ table {
     border-collapse: collapse;
 }
 
+
 thead th {
     background-color: #f4f4f4;
-    position: sticky;
     top: 0;
     text-align: left;
-    padding: 10px;
+    padding: 1rem;
     border: 1px solid #ddd;
     cursor: pointer;
+    white-space: nowrap;
 }
 
 tbody td {
     text-align: left;
-    padding: 10px;
-    border: 1px solid #ddd;
+    padding: 1rem;
+    border: 2px solid #ddd;
+    word-wrap: break-word;
+    white-space: normal;
 }
 
 tbody tr:nth-child(even) {

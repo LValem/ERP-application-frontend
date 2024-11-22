@@ -25,6 +25,16 @@ const CustomerTable = () => {
         size: 20,
     });
 
+    const [searchFields, setSearchFields] = useState({
+        customerName: "",
+        address: "",
+        cityCounty: "",
+        zip: "",
+        email: "",
+        phoneNumber: "",
+        vatNo: "",
+    });
+
     useEffect(() => {
         fetchCustomers();
     }, [criteria]);
@@ -69,22 +79,136 @@ const CustomerTable = () => {
         navigate(`/customers/edit/${customerId}`); // Navigate to edit page with customerId
     };
 
+    const handleSearchChange = (e) => {
+        const { name, value } = e.target;
+        setSearchFields((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const applySearchCriteria = (e) => {
+        if (e.key === "Enter") {
+            setCriteria((prev) => ({
+                ...prev,
+                customerName: searchFields.customerName.trim() ? searchFields.customerName : null,
+                address: searchFields.address.trim() ? searchFields.address : null,
+                cityCounty: searchFields.cityCounty.trim() ? searchFields.cityCounty : null,
+                zip: searchFields.zip.trim() ? searchFields.zip : null,
+                email: searchFields.email.trim() ? searchFields.email : null,
+                phoneNumber: searchFields.phoneNumber.trim() ? searchFields.phoneNumber : null,
+                vatNo: searchFields.vatNo.trim() ? searchFields.vatNo : null,
+                page: 0, // Reset to the first page
+            }));
+        }
+    };
+
+    const handleReset = () => {
+        setSearchFields({
+            customerName: "",
+            address: "",
+            cityCounty: "",
+            zip: "",
+            email: "",
+            phoneNumber: "",
+            vatNo: "",
+        });
+
+        setCriteria((prev) => ({
+            ...prev,
+            customerName: null,
+            address: null,
+            cityCounty: null,
+            zip: null,
+            email: null,
+            phoneNumber: null,
+            vatNo: null,
+            page: 0, // Reset to the first page
+        }));
+    };
+
     return (
         <div className="table-container">
+            {/* Search Fields */}
+            <div className="search-fields">
+                <input
+                    type="text"
+                    name="customerName"
+                    placeholder="Search by Name"
+                    value={searchFields.customerName}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="text"
+                    name="address"
+                    placeholder="Search by Address"
+                    value={searchFields.address}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="text"
+                    name="cityCounty"
+                    placeholder="Search by City/County"
+                    value={searchFields.cityCounty}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="text"
+                    name="zip"
+                    placeholder="Search by ZIP"
+                    value={searchFields.zip}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="text"
+                    name="email"
+                    placeholder="Search by Email"
+                    value={searchFields.email}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="text"
+                    name="phoneNumber"
+                    placeholder="Search by Phone"
+                    value={searchFields.phoneNumber}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="text"
+                    name="vatNo"
+                    placeholder="Search by VAT No"
+                    value={searchFields.vatNo}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                {/* Reset Button */}
+                <button onClick={handleReset} className="add-button">
+                    Reset
+                </button>
+            </div>
+
             <div className="metadata">
-                <p>Total Customers: {totalElements}</p>
-                <p>Total Pages: {totalPages}</p>
-                <p>Current Page: {currentPage + 1}</p>
                 <button onClick={() => navigate("/customers/add")} className="add-button">
                     Add New Customer
                 </button>
+                <div className="metadata-info">
+                    <p>Total Orders: {totalElements}</p>
+                    <p>Total Pages: {totalPages}</p>
+                    <p>Current Page: {currentPage + 1}</p>
+                </div>
             </div>
 
             <div className="table-wrapper">
                 <table>
                     <thead>
                     <tr>
-                    <th onClick={() => handleSort("customerId")}>ID</th>
+                        <th onClick={() => handleSort("customerId")}>ID</th>
                         <th onClick={() => handleSort("customerName")}>Name</th>
                         <th onClick={() => handleSort("address")}>Address</th>
                         <th onClick={() => handleSort("cityCounty")}>City/County</th>

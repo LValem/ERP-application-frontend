@@ -10,8 +10,8 @@ function MenuBar({ isOpen, toggleMenu }) {
         { path: '/employees', text: 'Employees' },
         { path: '/customers', text: 'Customers'},
         { path: '/orders', text: 'Orders'},
-        { path: 'jobs/done', text: 'Completed jobs'},
-        { path: 'jobs/not-done', text: 'Jobs in process'},
+        { path: '/jobs/done', text: 'Completed jobs'},
+        { path: '/jobs/not-done', text: 'Jobs in process'},
     ];
 
     return (

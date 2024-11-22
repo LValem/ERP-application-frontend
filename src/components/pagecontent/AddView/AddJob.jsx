@@ -45,7 +45,7 @@ const AddJob = () => {
         try {
             const token = JSON.parse(localStorage.getItem("token"));
             const headers = { headers: { Authorization: `Bearer ${token}` } };
-            const response = await axios.get("/api/orders", headers);
+            const response = await axios.get("/api/orders/without-job", headers);
             setOrders(response.data);
         } catch (error) {
             console.error("Error fetching orders:", error);
@@ -54,6 +54,8 @@ const AddJob = () => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+        console.log("Field:", name); // Should be "vehicleId"
+        console.log("Value:", value); // Should be "vehicleId" (e.g., "1")
         setJobData((prev) => ({
             ...prev,
             [name]: value,
@@ -84,6 +86,7 @@ const AddJob = () => {
         }
     };
 
+    console.log(vehicles);
     return (
         <div className="type-container">
             <form onSubmit={handleSubmit} className="job-form">
@@ -144,7 +147,7 @@ const AddJob = () => {
                         </option>
                         {orders.map((order) => (
                             <option key={order.orderId} value={order.orderId}>
-                                {order.customerId}
+                                {`${order.orderId} - ${order.customerName}`}
                             </option>
                         ))}
                     </select>

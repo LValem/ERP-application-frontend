@@ -13,16 +13,38 @@ const OrdersTable = () => {
 
     const [criteria, setCriteria] = useState({
         customerName: null,
-        pickupDate: null,
-        dropOffDate: null,
-        weight: null,
-        width: null,
-        height: null,
-        length: null,
+        pickupDateStart: null,
+        pickupDateEnd: null,
+        dropOffDateStart: null,
+        dropOffDateEnd: null,
+        minWeight: null,
+        maxWeight: null,
+        minWidth: null,
+        maxWidth: null,
+        minHeight: null,
+        maxHeight: null,
+        minLength: null,
+        maxLength: null,
         sortBy: null,
         sortDirection: null,
         page: 0,
         size: 20,
+    });
+
+    const [searchFields, setSearchFields] = useState({
+        customerName: "",
+        pickupDateStart: "",
+        pickupDateEnd: "",
+        dropOffDateStart: "",
+        dropOffDateEnd: "",
+        minWeight: "",
+        maxWeight: "",
+        minWidth: "",
+        maxWidth: "",
+        minHeight: "",
+        maxHeight: "",
+        minLength: "",
+        maxLength: "",
     });
 
     useEffect(() => {
@@ -65,19 +87,165 @@ const OrdersTable = () => {
         }
     };
 
+    const handleSearchChange = (e) => {
+        const { name, value } = e.target;
+        setSearchFields((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const applySearchCriteria = (e) => {
+        if (e.key === "Enter") {
+            setCriteria((prev) => ({
+                ...prev,
+                customerName: searchFields.customerName.trim() ? searchFields.customerName : null,
+                pickupDateStart: searchFields.pickupDateStart || null,
+                pickupDateEnd: searchFields.pickupDateEnd || null,
+                dropOffDateStart: searchFields.dropOffDateStart || null,
+                dropOffDateEnd: searchFields.dropOffDateEnd || null,
+                minWeight: searchFields.minWeight.trim() ? parseFloat(searchFields.minWeight) : null,
+                maxWeight: searchFields.maxWeight.trim() ? parseFloat(searchFields.maxWeight) : null,
+                minWidth: searchFields.minWidth.trim() ? parseFloat(searchFields.minWidth) : null,
+                maxWidth: searchFields.maxWidth.trim() ? parseFloat(searchFields.maxWidth) : null,
+                minHeight: searchFields.minHeight.trim() ? parseFloat(searchFields.minHeight) : null,
+                maxHeight: searchFields.maxHeight.trim() ? parseFloat(searchFields.maxHeight) : null,
+                minLength: searchFields.minLength.trim() ? parseFloat(searchFields.minLength) : null,
+                maxLength: searchFields.maxLength.trim() ? parseFloat(searchFields.maxLength) : null,
+                page: 0, // Reset to the first page
+            }));
+        }
+    };
+
+    const handleReset = () => {
+        setSearchFields({
+            customerName: "",
+            pickupDateStart: "",
+            pickupDateEnd: "",
+            dropOffDateStart: "",
+            dropOffDateEnd: "",
+            minWeight: "",
+            maxWeight: "",
+            minWidth: "",
+            maxWidth: "",
+            minHeight: "",
+            maxHeight: "",
+            minLength: "",
+            maxLength: "",
+        });
+
+        setCriteria((prev) => ({
+            ...prev,
+            customerName: null,
+            pickupDateStart: null,
+            pickupDateEnd: null,
+            dropOffDateStart: null,
+            dropOffDateEnd: null,
+            minWeight: null,
+            maxWeight: null,
+            minWidth: null,
+            maxWidth: null,
+            minHeight: null,
+            maxHeight: null,
+            minLength: null,
+            maxLength: null,
+            page: 0, // Reset to the first page
+        }));
+    };
+
     const handleEditOrder = (orderId) => {
-        navigate(`/orders/edit/${orderId}`); // Navigate to edit page with orderId
+        navigate(`/orders/edit/${orderId}`);
     };
 
     return (
         <div className="table-container">
+            <div className="search-fields">
+                <input
+                    type="text"
+                    name="customerName"
+                    placeholder="Customer Name"
+                    value={searchFields.customerName}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="number"
+                    name="minWeight"
+                    placeholder="Min Weight (kg)"
+                    value={searchFields.minWeight}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="number"
+                    name="maxWeight"
+                    placeholder="Max Weight (kg)"
+                    value={searchFields.maxWeight}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="number"
+                    name="minWidth"
+                    placeholder="Min Width (cm)"
+                    value={searchFields.minWidth}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="number"
+                    name="maxWidth"
+                    placeholder="Max Width (cm)"
+                    value={searchFields.maxWidth}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="number"
+                    name="minHeight"
+                    placeholder="Min Height (cm)"
+                    value={searchFields.minHeight}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="number"
+                    name="maxHeight"
+                    placeholder="Max Height (cm)"
+                    value={searchFields.maxHeight}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="number"
+                    name="minLength"
+                    placeholder="Min Length (cm)"
+                    value={searchFields.minLength}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <input
+                    type="number"
+                    name="maxLength"
+                    placeholder="Max Length (cm)"
+                    value={searchFields.maxLength}
+                    onChange={handleSearchChange}
+                    onKeyDown={applySearchCriteria}
+                />
+                <button onClick={handleReset} className="add-button">
+                    Reset
+                </button>
+            </div>
+
             <div className="metadata">
-                <p>Total Orders: {totalElements}</p>
-                <p>Total Pages: {totalPages}</p>
-                <p>Current Page: {currentPage + 1}</p>
                 <button onClick={() => navigate("/orders/add")} className="add-button">
                     Add New Order
                 </button>
+                <div className="metadata-info">
+                    <p>Total Orders: {totalElements}</p>
+                    <p>Total Pages: {totalPages}</p>
+                    <p>Current Page: {currentPage + 1}</p>
+                </div>
             </div>
 
             <div className="table-wrapper">
@@ -109,12 +277,12 @@ const OrdersTable = () => {
                             </td>
                             <td>
                                 {order.pickupDate
-                                    ? new Date(order.pickupDate).toLocaleDateString()
+                                    ? new Date(order.pickupDate).toLocaleString()
                                     : ""}
                             </td>
                             <td>
                                 {order.dropOffDate
-                                    ? new Date(order.dropOffDate).toLocaleDateString()
+                                    ? new Date(order.dropOffDate).toLocaleString()
                                     : ""}
                             </td>
                             <td>{order.weight}</td>
