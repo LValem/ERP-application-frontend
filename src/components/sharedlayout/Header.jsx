@@ -20,7 +20,9 @@ function Header() {
         "/orders/edit/:orderId": "Edit Order",
         "/jobs/done": "Completed jobs",
         "/jobs/not-done": "Jobs in process",
-        "/jobs/add": "Create a new job"
+        "/jobs/add": "Create a new job",
+        "/employee/edit/:id": "Edit Employee",
+        "/employee/add" : "Create a new Employee"
     };
 
     // Should include id as well, like "Edit Order 4" but doesn't
@@ -76,7 +78,7 @@ function Header() {
                 <div className="header-title">
                     <h1>{currentTitle}</h1>
                 </div>
-                <a href="/" className="logo-link">
+                <a href="/home" className="logo-link">
                     <img src="/src/assets/stekkor-logo-header.png" alt="Stekkor Transport Logo"
                          className="header-logo"/>
                 </a>

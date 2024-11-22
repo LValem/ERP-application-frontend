@@ -1,10 +1,9 @@
-// MenuBar.js
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import LogoutButton from '../pagecontent/LogoutButton';
 import '../Css/MenuBar.css';
 
 function MenuBar({ isOpen, toggleMenu }) {
-
     const menuLinks = [
         { path: '/home', text: 'Homepage' },
         { path: '/employees', text: 'Employees' },
@@ -22,6 +21,10 @@ function MenuBar({ isOpen, toggleMenu }) {
                         {link.text}
                     </Link>
                 ))}
+            </div>
+            {/* Place the logout button at the bottom or outside the menu links */}
+            <div className="logout-container">
+                <LogoutButton />
             </div>
         </div>
     );

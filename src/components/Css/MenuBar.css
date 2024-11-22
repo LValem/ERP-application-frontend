@@ -10,6 +10,9 @@
     z-index: 900;
     color: white;
     padding-top: 1rem;
+    display: flex; /* Use flexbox for layout */
+    flex-direction: column;
+    justify-content: space-between; /* Push items to top and bottom */
 }
 
 .menu-bar.open {
@@ -32,4 +35,23 @@
 
 .menu-links a:hover {
     color: #bcbcb9;
+}
+
+.logout-container {
+    text-align: center;
+    padding: 1rem;
+}
+
+.logout-button {
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    font-size: 1rem; /* Relative font size */
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.logout-button:hover {
+    background-color: #ff7875;
 }
