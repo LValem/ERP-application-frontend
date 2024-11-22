@@ -79,7 +79,7 @@ function Header() {
                     <h1>{currentTitle}</h1>
                 </div>
                 <a href="/home" className="logo-link">
-                    <img src="/src/assets/stekkor-logo-header.png" alt="Stekkor Transport Logo"
+                    <img src="/src/assets/stekkor-logo-header-fix.png" alt="Stekkor Transport Logo"
                          className="header-logo"/>
                 </a>
             </div>
