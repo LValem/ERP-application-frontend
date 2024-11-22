@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import '../Css/EmployeeForm.css';
+import '../../Css/EditView.css';
 import axios from 'axios';
 
 function EditEmployee() {
