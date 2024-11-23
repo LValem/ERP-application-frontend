@@ -8,6 +8,7 @@ function EditEmployee() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [employee, setEmployee] = useState({
+        employeeId: null,
         name: null,
         permissionId: null,
         password: null,
@@ -28,11 +29,7 @@ function EditEmployee() {
 
             try {
                 const response = await axios.get(`/api/employees/${id}`, headers);
-                setEmployee({
-                    name: response.data.name,
-                    permissionId: response.data.permissionId,
-                    password: '',
-                });
+                setEmployee(response.data);
             } catch (error) {
                 alert('Failed to fetch employee data.');
                 console.error('Error:', error);
@@ -84,49 +81,61 @@ function EditEmployee() {
     };
 
     return (
-        <div>
-            <h2>Edit Employee</h2>
-
-            {/* Error alert */}
+        <div className="type-container">
             {error && <p className="error">{error}</p>}
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="order-form">
+                {/* Non-editable Employee ID field */}
                 <div>
-                    <label>Name:</label>
+                    <label htmlFor="employeeId">Employee ID:</label>
                     <input
                         type="text"
+                        id="employeeId"
+                        name="employeeId"
+                        value={employee.employeeId || ""}
+                        disabled
+                    />
+                </div>
+
+                {/* Editable fields */}
+                <div>
+                    <label htmlFor="name">Name:</label>
+                    <input
+                        type="text"
+                        id="name"
                         name="name"
-                        value={employee.name}
+                        value={employee.name || ""}
                         onChange={handleInputChange}
                     />
                 </div>
                 <div>
-                    <label>Permission ID:</label>
+                    <label htmlFor="permissionId">Permission ID:</label>
                     <input
-                        type="text"
+                        type="number"
+                        id="permissionId"
                         name="permissionId"
-                        value={employee.permissionId}
+                        value={employee.permissionId || ""}
                         onChange={handleInputChange}
                     />
                 </div>
                 <div>
-                    <label>Password:</label>
+                    <label htmlFor="password">Password:</label>
                     <div className="password-input">
                         <input
-                            type={passwordVisible ? "text" : "password"} // Toggle between text and password
+                            type={passwordVisible ? "text" : "password"}
+                            id="password"
                             name="password"
-                            value={employee.password}
+                            value={employee.password || ""}
                             onChange={handleInputChange}
-                            placeholder="Current password not shown!"
+                            placeholder="Enter new password (optional)"
                         />
                         <span className="eye-icon" onClick={togglePasswordVisibility}>
-                            {passwordVisible ? <FaEyeSlash/> : <FaEye/>} {/* Show/hide eye icon */}
+                            {passwordVisible ? <FaEyeSlash /> : <FaEye />}
                         </span>
                     </div>
                 </div>
-                <div>
-                    <button type="submit">Save Changes</button>
-                </div>
+
+                <button type="submit">Save Changes</button>
             </form>
         </div>
     );

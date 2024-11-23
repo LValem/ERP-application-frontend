@@ -12,7 +12,7 @@ import AddOrder from "./components/pagecontent/AddView/AddOrder.jsx";
 import DoneJobsTable from "./components/pagecontent/TableView/DoneJobsTable.jsx";
 import NotDoneJobsTable from "./components/pagecontent/TableView/NotDoneJobsTable.jsx";
 import AddJob from "./components/pagecontent/AddView/AddJob.jsx";
-import EmployeeTable from "./components/pagecontent/EmployeeTable.jsx";
+import EmployeeTable from "./components/pagecontent/TableView/EmployeeTable.jsx";
 import EditEmployee from "./components/pagecontent/EditView/EditEmployee.jsx";
 import ProtectedRoutes from "./components/security/ProtectedRoutes.jsx";
 import AddEmployee from "./components/pagecontent/AddView/AddEmployee.jsx";
