@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../../Css/TableView.css";
+import Pagination from "../../sharedlayout/Pagination.jsx";
 
 const OrdersTable = () => {
     const [data, setData] = useState([]);
@@ -26,25 +27,9 @@ const OrdersTable = () => {
         minLength: null,
         maxLength: null,
         sortBy: null,
-        sortDirection: null,
+        sortDirection: "ASC",
         page: 0,
         size: 20,
-    });
-
-    const [searchFields, setSearchFields] = useState({
-        customerName: "",
-        pickupDateStart: "",
-        pickupDateEnd: "",
-        dropOffDateStart: "",
-        dropOffDateEnd: "",
-        minWeight: "",
-        maxWeight: "",
-        minWidth: "",
-        maxWidth: "",
-        minHeight: "",
-        maxHeight: "",
-        minLength: "",
-        maxLength: "",
     });
 
     useEffect(() => {
@@ -61,7 +46,17 @@ const OrdersTable = () => {
                 },
             };
 
-            const response = await axios.post("/api/orders/table", criteria, headers);
+            const queryParams = new URLSearchParams();
+            Object.keys(criteria).forEach((key) => {
+                if (criteria[key] !== "" && criteria[key] !== null) {
+                    queryParams.append(key, criteria[key]);
+                }
+            });
+
+            const url = `/api/orders/table?${queryParams.toString()}`;
+            console.log("Fetching data from:", url);
+
+            const response = await axios.get(url, headers);
             const { content, totalElements, totalPages } = response.data;
 
             setData(content);
@@ -80,62 +75,16 @@ const OrdersTable = () => {
         }));
     };
 
-    const handlePageChange = (page) => {
-        if (page >= 0 && page < totalPages) {
-            setCriteria((prev) => ({ ...prev, page }));
-            setCurrentPage(page);
-        }
-    };
-
     const handleSearchChange = (e) => {
         const { name, value } = e.target;
-        setSearchFields((prev) => ({
+        setCriteria((prev) => ({
             ...prev,
-            [name]: value,
+            [name]: value || "",
         }));
     };
 
-    const applySearchCriteria = (e) => {
-        if (e.key === "Enter") {
-            setCriteria((prev) => ({
-                ...prev,
-                customerName: searchFields.customerName.trim() ? searchFields.customerName : null,
-                pickupDateStart: searchFields.pickupDateStart || null,
-                pickupDateEnd: searchFields.pickupDateEnd || null,
-                dropOffDateStart: searchFields.dropOffDateStart || null,
-                dropOffDateEnd: searchFields.dropOffDateEnd || null,
-                minWeight: searchFields.minWeight.trim() ? parseFloat(searchFields.minWeight) : null,
-                maxWeight: searchFields.maxWeight.trim() ? parseFloat(searchFields.maxWeight) : null,
-                minWidth: searchFields.minWidth.trim() ? parseFloat(searchFields.minWidth) : null,
-                maxWidth: searchFields.maxWidth.trim() ? parseFloat(searchFields.maxWidth) : null,
-                minHeight: searchFields.minHeight.trim() ? parseFloat(searchFields.minHeight) : null,
-                maxHeight: searchFields.maxHeight.trim() ? parseFloat(searchFields.maxHeight) : null,
-                minLength: searchFields.minLength.trim() ? parseFloat(searchFields.minLength) : null,
-                maxLength: searchFields.maxLength.trim() ? parseFloat(searchFields.maxLength) : null,
-                page: 0, // Reset to the first page
-            }));
-        }
-    };
-
     const handleReset = () => {
-        setSearchFields({
-            customerName: "",
-            pickupDateStart: "",
-            pickupDateEnd: "",
-            dropOffDateStart: "",
-            dropOffDateEnd: "",
-            minWeight: "",
-            maxWeight: "",
-            minWidth: "",
-            maxWidth: "",
-            minHeight: "",
-            maxHeight: "",
-            minLength: "",
-            maxLength: "",
-        });
-
-        setCriteria((prev) => ({
-            ...prev,
+        setCriteria({
             customerName: null,
             pickupDateStart: null,
             pickupDateEnd: null,
@@ -149,102 +98,79 @@ const OrdersTable = () => {
             maxHeight: null,
             minLength: null,
             maxLength: null,
-            page: 0, // Reset to the first page
-        }));
+            sortBy: null,
+            sortDirection: "ASC",
+            page: 0,
+            size: 20,
+        });
     };
 
     const handleEditOrder = (orderId) => {
         navigate(`/orders/edit/${orderId}`);
     };
 
+    const handlePageChange = (newPage) => {
+        setCriteria((prev) => ({ ...prev, page: newPage }));
+        setCurrentPage(newPage);
+    };
+
     return (
         <div className="table-container">
             <div className="search-fields">
-                <input
-                    type="text"
-                    name="customerName"
-                    placeholder="Customer Name"
-                    value={searchFields.customerName}
-                    onChange={handleSearchChange}
-                    onKeyDown={applySearchCriteria}
-                />
-                <input
-                    type="number"
-                    name="minWeight"
-                    placeholder="Min Weight (kg)"
-                    value={searchFields.minWeight}
-                    onChange={handleSearchChange}
-                    onKeyDown={applySearchCriteria}
-                />
-                <input
-                    type="number"
-                    name="maxWeight"
-                    placeholder="Max Weight (kg)"
-                    value={searchFields.maxWeight}
-                    onChange={handleSearchChange}
-                    onKeyDown={applySearchCriteria}
-                />
-                <input
-                    type="number"
-                    name="minWidth"
-                    placeholder="Min Width (cm)"
-                    value={searchFields.minWidth}
-                    onChange={handleSearchChange}
-                    onKeyDown={applySearchCriteria}
-                />
-                <input
-                    type="number"
-                    name="maxWidth"
-                    placeholder="Max Width (cm)"
-                    value={searchFields.maxWidth}
-                    onChange={handleSearchChange}
-                    onKeyDown={applySearchCriteria}
-                />
-                <input
-                    type="number"
-                    name="minHeight"
-                    placeholder="Min Height (cm)"
-                    value={searchFields.minHeight}
-                    onChange={handleSearchChange}
-                    onKeyDown={applySearchCriteria}
-                />
-                <input
-                    type="number"
-                    name="maxHeight"
-                    placeholder="Max Height (cm)"
-                    value={searchFields.maxHeight}
-                    onChange={handleSearchChange}
-                    onKeyDown={applySearchCriteria}
-                />
-                <input
-                    type="number"
-                    name="minLength"
-                    placeholder="Min Length (cm)"
-                    value={searchFields.minLength}
-                    onChange={handleSearchChange}
-                    onKeyDown={applySearchCriteria}
-                />
-                <input
-                    type="number"
-                    name="maxLength"
-                    placeholder="Max Length (cm)"
-                    value={searchFields.maxLength}
-                    onChange={handleSearchChange}
-                    onKeyDown={applySearchCriteria}
-                />
-                <button onClick={handleReset} className="add-button">
-                    Reset
-                </button>
+                <input type="text" name="customerName" placeholder="Customer Name" value={criteria.customerName || ""}
+                       onChange={handleSearchChange}/>
+                <input type="number" name="minWeight" placeholder="Min Weight (kg)" value={criteria.minWeight || ""}
+                       onChange={handleSearchChange}/>
+                <input type="number" name="maxWeight" placeholder="Max Weight (kg)" value={criteria.maxWeight || ""}
+                       onChange={handleSearchChange}/>
+                <input type="number" name="minWidth" placeholder="Min Width (cm)" value={criteria.minWidth || ""}
+                       onChange={handleSearchChange}/>
+                <input type="number" name="maxWidth" placeholder="Max Width (cm)" value={criteria.maxWidth || ""}
+                       onChange={handleSearchChange}/>
+                <input type="number" name="minHeight" placeholder="Min Height (cm)" value={criteria.minHeight || ""}
+                       onChange={handleSearchChange}/>
+                <input type="number" name="maxHeight" placeholder="Max Height (cm)" value={criteria.maxHeight || ""}
+                       onChange={handleSearchChange}/>
+                <input type="number" name="minLength" placeholder="Min Length (cm)" value={criteria.minLength || ""}
+                       onChange={handleSearchChange}/>
+                <input type="number" name="maxLength" placeholder="Max Length (cm)" value={criteria.maxLength || ""}
+                       onChange={handleSearchChange}/>
+                <button onClick={handleReset} className="add-button">Reset</button>
             </div>
 
             <div className="metadata">
-                <button onClick={() => navigate("/orders/add")} className="add-button">
-                    Add New Order
-                </button>
+                <button onClick={() => navigate("/orders/add")} className="add-button">Add New Order</button>
                 <div className="metadata-info">
-                    <p>Total Orders: {totalElements}</p>
                     <p>Total Pages: {totalPages}</p>
                     <p>Current Page: {currentPage + 1}</p>
+                    <p>
+                        Showing
+                        <input
+                            type="number"
+                            min="1"
+                            max="500"
+                            value={criteria.size || ""}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === "" || (Number(value) >= 1 && Number(value) <= 500)) {
+                                    setCriteria((prev) => ({...prev, size: value}));
+                                }
+                            }}
+                            onBlur={(e) => {
+                                const value = Number(e.target.value);
+                                if (isNaN(value) || value < 1 || value > 500) {
+                                    setCriteria((prev) => ({...prev, size: 20})); // Always reset to 20 if invalid
+                                } else {
+                                    setCriteria((prev) => ({...prev, size: value, page: 0}));
+                                }
+                            }}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") e.target.blur(); // Apply the number when Enter is pressed
+                            }}
+                            style={{width: "60px", margin: "0 5px", textAlign: "center"}}
+                        />
+                        out of {totalElements}
+                    </p>
                 </div>
             </div>
 
@@ -252,15 +178,23 @@ const OrdersTable = () => {
                 <table>
                     <thead>
                     <tr>
-                        <th onClick={() => handleSort("orderId")}>ID</th>
-                        <th onClick={() => handleSort("customerName")}>Customer Name</th>
-                        <th onClick={() => handleSort("pickupDate")}>Pick Up Date</th>
-                        <th onClick={() => handleSort("dropOffDate")}>Drop Off Date</th>
-                        <th onClick={() => handleSort("weight")}>Weight (kg)</th>
-                        <th onClick={() => handleSort("width")}>Width (cm)</th>
-                        <th onClick={() => handleSort("height")}>Height (cm)</th>
-                        <th onClick={() => handleSort("length")}>Length (cm)</th>
-                        <th onClick={() => handleSort("orderDetails")}>Details</th>
+                        <th onClick={() => handleSort("orderId")}>ID {criteria.sortBy === "orderId" ? (criteria.sortDirection === "ASC" ? "▲" : "▼") : ""}</th>
+                        <th onClick={() => handleSort("customerName")}>Customer
+                            Name {criteria.sortBy === "customerName" ? (criteria.sortDirection === "ASC" ? "▲" : "▼") : ""}</th>
+                        <th onClick={() => handleSort("pickupDate")}>Pick Up
+                            Date {criteria.sortBy === "pickupDate" ? (criteria.sortDirection === "ASC" ? "▲" : "▼") : ""}</th>
+                        <th onClick={() => handleSort("dropOffDate")}>Drop Off
+                            Date {criteria.sortBy === "dropOffDate" ? (criteria.sortDirection === "ASC" ? "▲" : "▼") : ""}</th>
+                        <th onClick={() => handleSort("weight")}>Weight
+                            (kg) {criteria.sortBy === "weight" ? (criteria.sortDirection === "ASC" ? "▲" : "▼") : ""}</th>
+                        <th onClick={() => handleSort("width")}>Width
+                            (cm) {criteria.sortBy === "width" ? (criteria.sortDirection === "ASC" ? "▲" : "▼") : ""}</th>
+                        <th onClick={() => handleSort("height")}>Height
+                            (cm) {criteria.sortBy === "height" ? (criteria.sortDirection === "ASC" ? "▲" : "▼") : ""}</th>
+                        <th onClick={() => handleSort("length")}>Length
+                            (cm) {criteria.sortBy === "length" ? (criteria.sortDirection === "ASC" ? "▲" : "▼") : ""}</th>
+                        <th onClick={() => handleSort("orderDetails")}>Details
+                            {criteria.sortBy === "orderDetails" ? (criteria.sortDirection === "ASC" ? "▲" : "▼") : ""}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -268,23 +202,11 @@ const OrdersTable = () => {
                         <tr key={order.orderId}>
                             <td>{order.orderId}</td>
                             <td>
-                                <button
-                                    className="link-button"
-                                    onClick={() => handleEditOrder(order.orderId)}
-                                >
-                                    {order.customerName}
-                                </button>
+                                <button className="link-button"
+                                        onClick={() => handleEditOrder(order.orderId)}>{order.customerName}</button>
                             </td>
-                            <td>
-                                {order.pickupDate
-                                    ? new Date(order.pickupDate).toLocaleString()
-                                    : ""}
-                            </td>
-                            <td>
-                                {order.dropOffDate
-                                    ? new Date(order.dropOffDate).toLocaleString()
-                                    : ""}
-                            </td>
+                            <td>{order.pickupDate ? new Date(order.pickupDate).toLocaleString() : ""}</td>
+                            <td>{order.dropOffDate ? new Date(order.dropOffDate).toLocaleString() : ""}</td>
                             <td>{order.weight}</td>
                             <td>{order.width}</td>
                             <td>{order.height}</td>
@@ -295,21 +217,11 @@ const OrdersTable = () => {
                     </tbody>
                 </table>
             </div>
-
-            <div className="pagination">
-                <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 0}
-                >
-                    Previous
-                </button>
-                <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage + 1 >= totalPages}
-                >
-                    Next
-                </button>
-            </div>
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+            />
         </div>
     );
 };
