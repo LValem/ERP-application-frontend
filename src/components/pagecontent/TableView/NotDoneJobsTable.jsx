@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../../Css/TableView.css";
 import { useNavigate } from "react-router-dom";
+import Pagination from "../../sharedlayout/Pagination.jsx";
 
 const NotDoneJobsTable = () => {
     const [data, setData] = useState([]);
@@ -22,21 +23,9 @@ const NotDoneJobsTable = () => {
         dropOffDateStart: null,
         dropOffDateEnd: null,
         sortBy: null,
-        sortDirection: null,
+        sortDirection: "ASC",
         page: 0,
         size: 20,
-    });
-
-    const [searchFields, setSearchFields] = useState({
-        jobId: "",
-        vehicleId: "",
-        registrationPlate: "",
-        orderId: "",
-        customerName: "",
-        pickupDateStart: "",
-        pickupDateEnd: "",
-        dropOffDateStart: "",
-        dropOffDateEnd: "",
     });
 
     useEffect(() => {
@@ -53,7 +42,17 @@ const NotDoneJobsTable = () => {
                 },
             };
 
-            const response = await axios.post("/api/jobs/not-done-table", criteria, headers);
+            const queryParams = new URLSearchParams();
+            Object.keys(criteria).forEach((key) => {
+                if (criteria[key] !== null && criteria[key] !== "") {
+                    queryParams.append(key, criteria[key]);
+                }
+            });
+
+            const url = `/api/jobs/not-done-table?${queryParams.toString()}`;
+            console.log("Fetching data from:", url);
+
+            const response = await axios.get(url, headers);
             const { content, totalElements, totalPages } = response.data;
 
             setData(content);
@@ -64,45 +63,20 @@ const NotDoneJobsTable = () => {
         }
     };
 
-    const handleSearchChange = (e) => {
-        const { name, value } = e.target;
-        setSearchFields((prev) => ({
+    const handleSort = (field) => {
+        setCriteria((prev) => ({
             ...prev,
-            [name]: value,
+            sortBy: field,
+            sortDirection: prev.sortBy === field && prev.sortDirection === "ASC" ? "DESC" : "ASC",
         }));
     };
 
-    const applySearchCriteria = (e) => {
-        if (e.key === "Enter") {
-            setCriteria((prev) => ({
-                ...prev,
-                jobId: searchFields.jobId.trim() ? parseInt(searchFields.jobId, 10) : null,
-                vehicleId: searchFields.vehicleId.trim() ? parseInt(searchFields.vehicleId, 10) : null,
-                registrationPlate: searchFields.registrationPlate.trim() || null,
-                orderId: searchFields.orderId.trim() ? parseInt(searchFields.orderId, 10) : null,
-                customerName: searchFields.customerName.trim() || null,
-                pickupDateStart: searchFields.pickupDateStart || null,
-                pickupDateEnd: searchFields.pickupDateEnd || null,
-                dropOffDateStart: searchFields.dropOffDateStart || null,
-                dropOffDateEnd: searchFields.dropOffDateEnd || null,
-                page: 0, // Reset to the first page
-            }));
-        }
+    const handleSearchChange = (e) => {
+        const { name, value } = e.target;
+        setCriteria((prev) => ({ ...prev, [name]: value || null }));
     };
 
     const handleReset = () => {
-        setSearchFields({
-            jobId: "",
-            vehicleId: "",
-            registrationPlate: "",
-            orderId: "",
-            customerName: "",
-            pickupDateStart: "",
-            pickupDateEnd: "",
-            dropOffDateStart: "",
-            dropOffDateEnd: "",
-        });
-
         setCriteria({
             jobId: null,
             vehicleId: null,
@@ -114,84 +88,65 @@ const NotDoneJobsTable = () => {
             dropOffDateStart: null,
             dropOffDateEnd: null,
             sortBy: null,
-            sortDirection: null,
+            sortDirection: "ASC",
             page: 0,
             size: 20,
         });
     };
 
-    const handleSort = (field) => {
-        setCriteria((prev) => ({
-            ...prev,
-            sortBy: field,
-            sortDirection: prev.sortBy === field && prev.sortDirection === "ASC" ? "DESC" : "ASC",
-        }));
-    };
-
-    const handlePageChange = (page) => {
-        if (page >= 0 && page < totalPages) {
-            setCriteria((prev) => ({ ...prev, page }));
-            setCurrentPage(page);
-        }
+    const handlePageChange = (newPage) => {
+        setCriteria((prev) => ({ ...prev, page: newPage }));
+        setCurrentPage(newPage);
     };
 
     return (
         <div className="table-container">
-            {/* Search Fields */}
             <div className="search-fields">
-                <input
-                    type="number"
-                    name="jobId"
-                    placeholder="Search by Job ID"
-                    value={searchFields.jobId}
-                    onChange={handleSearchChange}
-                    onKeyDown={applySearchCriteria}
-                />
-                <input
-                    type="number"
-                    name="vehicleId"
-                    placeholder="Search by Vehicle ID"
-                    value={searchFields.vehicleId}
-                    onChange={handleSearchChange}
-                    onKeyDown={applySearchCriteria}
-                />
-                <input
-                    type="text"
-                    name="registrationPlate"
-                    placeholder="Search by Registration Plate"
-                    value={searchFields.registrationPlate}
-                    onChange={handleSearchChange}
-                    onKeyDown={applySearchCriteria}
-                />
-                <input
-                    type="number"
-                    name="orderId"
-                    placeholder="Search by Order ID"
-                    value={searchFields.orderId}
-                    onChange={handleSearchChange}
-                    onKeyDown={applySearchCriteria}
-                />
-                <input
-                    type="text"
-                    name="customerName"
-                    placeholder="Search by Customer Name"
-                    value={searchFields.customerName}
-                    onChange={handleSearchChange}
-                    onKeyDown={applySearchCriteria}
-                />
-                <button onClick={handleReset} className="add-button">
-                    Reset
-                </button>
+                <input type="number" name="jobId" placeholder="Search by Job ID" value={criteria.jobId || ""}
+                       onChange={handleSearchChange}/>
+                <input type="number" name="vehicleId" placeholder="Search by Vehicle ID"
+                       value={criteria.vehicleId || ""} onChange={handleSearchChange}/>
+                <input type="text" name="registrationPlate" placeholder="Search by Registration Plate"
+                       value={criteria.registrationPlate || ""} onChange={handleSearchChange}/>
+                <input type="number" name="orderId" placeholder="Search by Order ID" value={criteria.orderId || ""}
+                       onChange={handleSearchChange}/>
+                <input type="text" name="customerName" placeholder="Search by Customer Name"
+                       value={criteria.customerName || ""} onChange={handleSearchChange}/>
+                <button onClick={handleReset} className="add-button">Reset</button>
             </div>
 
             <div className="metadata">
-                <button onClick={() => navigate("/jobs/add")} className="add-button">
-                    Add New Job
-                </button>
                 <div className="metadata-info">
-                    <p>Total Orders: {totalElements}</p>
                     <p>Total Pages: {totalPages}</p>
                     <p>Current Page: {currentPage + 1}</p>
+                    <p>
+                        Showing
+                        <input
+                            type="number"
+                            min="1"
+                            max="500"
+                            value={criteria.size || ""}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === "" || (Number(value) >= 1 && Number(value) <= 500)) {
+                                    setCriteria((prev) => ({...prev, size: value}));
+                                }
+                            }}
+                            onBlur={(e) => {
+                                const value = Number(e.target.value);
+                                if (isNaN(value) || value < 1 || value > 500) {
+                                    setCriteria((prev) => ({...prev, size: 20})); // Always reset to 20 if invalid
+                                } else {
+                                    setCriteria((prev) => ({...prev, size: value, page: 0}));
+                                }
+                            }}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") e.target.blur(); // Apply the number when Enter is pressed
+                            }}
+                            style={{width: "60px", margin: "0 5px", textAlign: "center"}}
+                        />
+                        out of {totalElements}
+                    </p>
                 </div>
             </div>
 
@@ -199,14 +154,21 @@ const NotDoneJobsTable = () => {
                 <table>
                     <thead>
                     <tr>
-                        <th onClick={() => handleSort("jobId")}>Job ID</th>
-                        <th onClick={() => handleSort("vehicleId")}>Vehicle ID</th>
-                        <th onClick={() => handleSort("registrationPlate")}>Registration Plate</th>
-                        <th onClick={() => handleSort("orderId")}>Order ID</th>
-                        <th onClick={() => handleSort("customerName")}>Customer Name</th>
-                        <th onClick={() => handleSort("pickupDate")}>Pickup Date</th>
-                        <th onClick={() => handleSort("dropOffDate")}>Drop-Off Date</th>
-                        <th onClick={() => handleSort("isComplete")}>Completed</th>
+                        <th onClick={() => handleSort("jobId")}>Job
+                            ID {criteria.sortBy === "jobId" ? (criteria.sortDirection === "ASC" ? "▲" : "▼") : ""}</th>
+                        <th onClick={() => handleSort("vehicleId")}>Vehicle
+                            ID {criteria.sortBy === "vehicleId" ? (criteria.sortDirection === "ASC" ? "▲" : "▼") : ""}</th>
+                        <th onClick={() => handleSort("registrationPlate")}>Registration
+                            Plate {criteria.sortBy === "registrationPlate" ? (criteria.sortDirection === "ASC" ? "▲" : "▼") : ""}</th>
+                        <th onClick={() => handleSort("orderId")}>Order
+                            ID {criteria.sortBy === "orderId" ? (criteria.sortDirection === "ASC" ? "▲" : "▼") : ""}</th>
+                        <th onClick={() => handleSort("customerName")}>Customer
+                            Name {criteria.sortBy === "customerName" ? (criteria.sortDirection === "ASC" ? "▲" : "▼") : ""}</th>
+                        <th onClick={() => handleSort("pickupDate")}>Pickup
+                            Date {criteria.sortBy === "pickupDate" ? (criteria.sortDirection === "ASC" ? "▲" : "▼") : ""}</th>
+                        <th onClick={() => handleSort("dropOffDate")}>Drop-Off
+                            Date {criteria.sortBy === "dropOffDate" ? (criteria.sortDirection === "ASC" ? "▲" : "▼") : ""}</th>
+                        <th onClick={() => handleSort("isComplete")}>Completed {criteria.sortBy === "isComplete" ? (criteria.sortDirection === "ASC" ? "▲" : "▼") : ""}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -225,21 +187,11 @@ const NotDoneJobsTable = () => {
                     </tbody>
                 </table>
             </div>
-
-            <div className="pagination">
-                <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 0}
-                >
-                    Previous
-                </button>
-                <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage + 1 >= totalPages}
-                >
-                    Next
-                </button>
-            </div>
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+            />
         </div>
     );
 };
