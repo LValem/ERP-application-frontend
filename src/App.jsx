@@ -16,6 +16,9 @@ import EmployeeTable from "./components/pagecontent/TableView/EmployeeTable.jsx"
 import EditEmployee from "./components/pagecontent/EditView/EditEmployee.jsx";
 import ProtectedRoutes from "./components/security/ProtectedRoutes.jsx";
 import AddEmployee from "./components/pagecontent/AddView/AddEmployee.jsx";
+import VehicleTable from "./components/pagecontent/TableView/VehicleTable.jsx";
+import AddVehicle from "./components/pagecontent/AddView/AddVehicle.jsx";
+import EditVehicle from "./components/pagecontent/EditView/EditVehicle.jsx";
 
 function MainApp() {
     const location = useLocation();
@@ -43,6 +46,9 @@ function MainApp() {
                         <Route path="/jobs/done" element={<DoneJobsTable />} />
                         <Route path="/jobs/not-done" element={<NotDoneJobsTable />} />
                         <Route path="/jobs/add" element={<AddJob />} />
+                        <Route path="/vehicles" element={<VehicleTable />} />
+                        <Route path="/vehicles/add" element={<AddVehicle />} />
+                        <Route path="/vehicles/edit/:id" element={<EditVehicle />} />
                         {/* Add future protected routes here */}
                     </Route>
                 </Routes>
