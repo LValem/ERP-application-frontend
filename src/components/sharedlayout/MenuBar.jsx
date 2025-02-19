@@ -12,6 +12,7 @@ function MenuBar({ isOpen, toggleMenu }) {
         { path: '/jobs/done', text: 'Completed jobs'},
         { path: '/jobs/not-done', text: 'Jobs in process'},
         { path: '/vehicles', text: 'Vehicles'},
+        { path: '/feedback', text: 'feedback'},
     ];
 
     return (

@@ -19,6 +19,7 @@ import AddEmployee from "./components/pagecontent/AddView/AddEmployee.jsx";
 import VehicleTable from "./components/pagecontent/TableView/VehicleTable.jsx";
 import AddVehicle from "./components/pagecontent/AddView/AddVehicle.jsx";
 import EditVehicle from "./components/pagecontent/EditView/EditVehicle.jsx";
+import AddFeedback from "./components/pagecontent/AddView/AddFeedback.jsx";
 
 function MainApp() {
     const location = useLocation();
@@ -49,6 +50,7 @@ function MainApp() {
                         <Route path="/vehicles" element={<VehicleTable />} />
                         <Route path="/vehicles/add" element={<AddVehicle />} />
                         <Route path="/vehicles/edit/:id" element={<EditVehicle />} />
+                        <Route path="/feedback" element={<AddFeedback />} />
                         {/* Add future protected routes here */}
                     </Route>
                 </Routes>

@@ -25,7 +25,8 @@ function Header() {
         "/employee/add" : "Create a new Employee",
         "/vehicles" : "Vehicles",
         "/vehicles/add": "Create a new vehicle",
-        "/vehicles/edit": "Edit customer"
+        "/vehicles/edit": "Edit customer",
+        "/feedback": "Add feedback",
     };
 
     // Should include id as well, like "Edit Order 4" but doesn't
